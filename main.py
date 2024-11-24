@@ -6,6 +6,7 @@ from torch.optim import lr_scheduler
 from torchvision import datasets, models, transforms
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.decomposition import PCA
 
 if __name__ == "__main__":
     data_dir = "./"
@@ -66,16 +67,15 @@ if __name__ == "__main__":
     # Decay LR by a factor of 0.1 every 7 epochs
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
 
-    for inputs, labels in dataloaders["train"]:
-        # 224 x 224 x 3 inputs
-        inputs = inputs.to(device)
-        labels = labels.to(device)
-        # 512 x 1 outputs
-        outputs = modified_model(inputs)
+    pca = PCA(n_components=50)
 
-    for inputs, labels in dataloaders["test"]:
-        # 224 x 224 x 3 inputs
-        inputs = inputs.to(device)
-        labels = labels.to(device)
-        # 512 x 1 outputs
-        outputs = modified_model(inputs)
+    inputs, labels = next(iter(dataloaders["train"]))
+    # [500 x 3 x 224 x 224] tensor inputs
+    # [batch_size x channels x height x width]
+    inputs = inputs.to(device)
+    # [500 x 512 x 1 x 1] tensor outputs
+    train_features = modified_model(inputs)
+    # Reshaping here because PCA expected array dimension <= 2.
+    train_features = train_features.to("cpu").reshape(500, 1 * 512)
+    # pca_train_dataset.shape = (500, 50)
+    pca_train_dataset = pca.fit_transform(train_features)
