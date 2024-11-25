@@ -4,9 +4,10 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
 from torchvision import datasets, models, transforms
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.decomposition import PCA
+
+from utils import select_n_img
 
 if __name__ == "__main__":
     data_dir = "./"
@@ -38,12 +39,13 @@ if __name__ == "__main__":
         ),
     }
 
+    selected_train_dataset, selected_test_dataset = select_n_img(image_datasets)
     dataloaders = {
         "train": torch.utils.data.DataLoader(
-            image_datasets["train"], batch_size=500, shuffle=True, num_workers=4
+            selected_train_dataset, batch_size=500, shuffle=True, num_workers=4
         ),
         "test": torch.utils.data.DataLoader(
-            image_datasets["test"], batch_size=100, shuffle=True, num_workers=4
+            selected_test_dataset, batch_size=100, shuffle=True, num_workers=4
         ),
     }
 
@@ -69,13 +71,18 @@ if __name__ == "__main__":
 
     pca = PCA(n_components=50)
 
-    inputs, labels = next(iter(dataloaders["train"]))
+    train_inputs, train_labels = next(iter(dataloaders["train"]))
+    test_inputs, test_labels = next(iter(dataloaders["test"]))
     # [500 x 3 x 224 x 224] tensor inputs
     # [batch_size x channels x height x width]
-    inputs = inputs.to(device)
+    train_inputs = train_inputs.to(device)
+    test_inputs = test_inputs.to(device)
     # [500 x 512 x 1 x 1] tensor outputs
-    train_features = modified_model(inputs)
+    train_features = modified_model(train_inputs)
+    test_features = modified_model(test_inputs)
     # Reshaping here because PCA expected array dimension <= 2.
     train_features = train_features.to("cpu").reshape(500, 1 * 512)
+    test_features = test_features.to("cpu").reshape(100, 1 * 512)
     # pca_train_dataset.shape = (500, 50)
     pca_train_dataset = pca.fit_transform(train_features)
+    pca_test_dataset = pca.fit_transform(test_features)
