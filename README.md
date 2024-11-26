@@ -10,7 +10,7 @@ Khanh Huy Nguyen 40125396
 
 `main.py`: Where we will be running our program. This file contains code on transforming and loading our data from CIFAR-10.
 
-`utils.py`: Contains utility functions: select_n_img() and extract_feature_vectors(). select_n_img() will select 500 training images per class and 100 testing images per class.
+`utils.py`: Contains utility functions: select_n_img() and extract_feature_vectors(). `select_n_img()` will select 500 training images per class and 100 testing images per class. `extract_feature_vectors()` takes in the data along with a model and will generate the PCA-reduced feature vectors.
 
 `naive_bayes.py`: Contains the Naive Bayes algorithm implementation.
 
@@ -40,4 +40,9 @@ Running the `main.py` script will automatically preprocess the images. Below is 
 
 3. We then use the utility function `select_n_img` to select the first 500 images of each class for the training datasets, and 100 images of each class for the testing datasets.
 4. We then use `dataloaders` to load data into our model, with training batch_size = 500 and testing batch_size=100.
+
+![image](https://github.com/user-attachments/assets/82182a84-b0e0-48d6-bd3a-35ec4e1a540e)
+
+5. Using the pretrained RestNet-18 model, we removed the last layer (restnet18.fc) to use it as a fixed feature extractor.
+6. We then pass in the modified model, the dataloaders and our device (cuda:0 or cpu) to the helper function `extract_feature_vectors` to get our PCA-reduced training feature vectors, testing feature vectors, training labels, testing labels.
 
