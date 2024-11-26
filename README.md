@@ -1,6 +1,4 @@
-# Image-Classification [WIP]
-
-COMP 472 Project
+# Image-Classification 
 
 Mohammad Usman 40170784
 
