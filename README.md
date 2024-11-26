@@ -46,3 +46,21 @@ Running the `main.py` script will automatically preprocess the images. Below is 
 5. Using the pretrained RestNet-18 model, we removed the last layer (restnet18.fc) to use it as a fixed feature extractor.
 6. We then pass in the modified model, the dataloaders and our device (cuda:0 or cpu) to the helper function `extract_feature_vectors` to get our PCA-reduced training feature vectors, testing feature vectors, training labels, testing labels.
 
+### Training, evaluating and applying the models
+
+#### Naive Bayes
+![image](https://github.com/user-attachments/assets/0b404885-f324-44eb-900a-6461bd4e0033)
+
+1. Train
+
+   To train our locally implemented model. Uncomment line 70-72. This will train the model and save it in `./models/gaussian_naive_bayes.pth`
+   To train Scikit's model. Uncomment line 82-84. This will train the model and save it in `./models/scikit_gaussian_naive_bayes.pth`
+3. Evaluate
+
+   To evaluate the models and get our metrics, we are using the helper function `get_naive_bayes_metrics()`. This function simply calculates the metrics and print them to the console. We can choose which model we want to use via the param `get_naive_bayes_metrics(..., useScikit = True/False)`, if `True` we will use Scikit's model, `False` we will use our locally implemented model.
+
+   ![image](https://github.com/user-attachments/assets/6129f8e7-2d76-42db-9a27-8905a3bb4ecc)
+
+5. Apply
+   
+   To apply the model, we simply load a trained model and pass int our test feature vectors `test_features_pca`. We can then calculate our metrics using the predictions the model returns `nb_predictions`
