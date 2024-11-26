@@ -1,13 +1,12 @@
 import torch
 import torchvision
 import torch.nn as nn
-import torch.optim as optim
-from torch.optim import lr_scheduler
 from torchvision import datasets, models, transforms
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import precision_score, recall_score, f1_score
+from naive_bayes import GaussianNaiveBayes
 from utils import extract_feature_vectors, select_n_img
+import numpy as np
 
 if __name__ == "__main__":
     data_dir = "./"
@@ -40,14 +39,14 @@ if __name__ == "__main__":
     selected_train_dataset, selected_test_dataset = select_n_img(image_datasets)
     dataloaders = {
         "train": torch.utils.data.DataLoader(
-            selected_train_dataset, batch_size=500, shuffle=True, num_workers=4
+            selected_train_dataset, batch_size=500, shuffle=False, num_workers=4
         ),
         "test": torch.utils.data.DataLoader(
-            selected_test_dataset, batch_size=100, shuffle=True, num_workers=4
+            selected_test_dataset, batch_size=100, shuffle=False, num_workers=4
         ),
     }
 
-    pretrained_model = models.resnet18(pretrained=True)
+    pretrained_model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
     # remove the last layer of ResNet-18
     modified_model = nn.Sequential(*list(pretrained_model.children())[:-1])
 
@@ -64,15 +63,59 @@ if __name__ == "__main__":
         )
     )
 
-    # We need to scale our inputs to avoid this error: Negative values in data passed to MultinomialNB (input X)
-    scaler = MinMaxScaler()
-    train_features_pca_scaled = scaler.fit_transform(train_features_pca)
-    test_features_pca_scaled = scaler.transform(test_features_pca)
-
     # 3: Naive Bayes
-    nb_model = MultinomialNB()
-    nb_model.fit(train_features_pca_scaled, train_labels_np)
-    predictions = nb_model.predict(test_features_pca_scaled)
-    accuracy = accuracy_score(test_labels_np, predictions)
+    # Training the Gaussian Naive Bayes model implementation
+    # gnb = GaussianNaiveBayes()
+    # gnb.fit(train_features_pca, train_labels_np)
+    # torch.save(gnb, "gaussian_naive_bayes.pth")
+    loaded_gnb = torch.load("gaussian_naive_bayes.pth")
 
-    print(f"Accuracy on the test set after PCA: {accuracy * 100:.2f}%")
+    # Train accuracy
+    train_predictions = loaded_gnb.predict(train_features_pca)
+    train_accuracy = np.mean(train_predictions == train_labels_np)
+
+    # Calculate Test Accuracy
+    predictions = loaded_gnb.predict(test_features_pca)
+    test_accuracy = np.mean(predictions == test_labels_np)
+    precision = precision_score(
+        test_labels_np, predictions, average="weighted", zero_division=0
+    )
+    recall = recall_score(
+        test_labels_np, predictions, average="weighted", zero_division=0
+    )
+    f1 = f1_score(test_labels_np, predictions, average="weighted", zero_division=0)
+
+    print(f"Training Accuracy = {train_accuracy* 100:.2f}%")
+    print(f"Test Accuracy = {test_accuracy * 100:.2f}%")
+    print(f"Precision = {precision}")
+    print(f"Recall = {recall}%")
+    print(f"f1 = {f1}%")
+
+    # Scikit's Gaussian Naive Bayes
+    # nb_model = GaussianNB()
+    # nb_model.fit(train_features_pca, train_labels_np)
+    # torch.save(nb_model, "scikit_gaussian_naive_bayes.pth")
+    loaded_nb = torch.load("scikit_gaussian_naive_bayes.pth")
+
+    # Train accuracy
+    nb_train_predictions = loaded_nb.predict(train_features_pca)
+    nb_train_accuracy = np.mean(nb_train_predictions == train_labels_np)
+
+    # Calculate Test Accuracy
+    nb_predictions = loaded_nb.predict(test_features_pca)
+    nb_test_accuracy = np.mean(nb_predictions == test_labels_np)
+    nb_precision = precision_score(
+        test_labels_np, nb_predictions, average="weighted", zero_division=0
+    )
+    nb_recall = recall_score(
+        test_labels_np, nb_predictions, average="weighted", zero_division=0
+    )
+    nb_f1 = f1_score(
+        test_labels_np, nb_predictions, average="weighted", zero_division=0
+    )
+
+    print(f"Training Accuracy = {nb_train_accuracy * 100:.2f}%")
+    print(f"Test Accuracy = {nb_test_accuracy * 100:.2f}%")
+    print(f"Precision = {nb_precision}")
+    print(f"Recall = {nb_recall}")
+    print(f"f1 = {nb_f1}")
