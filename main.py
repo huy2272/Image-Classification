@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # gnb = GaussianNaiveBayes()
     # gnb.fit(train_features_pca, train_labels_np)
     # torch.save(gnb, "gaussian_naive_bayes.pth")
-    loaded_gnb = torch.load("gaussian_naive_bayes.pth")
+    loaded_gnb = torch.load("./models/gaussian_naive_bayes.pth")
 
     # Train accuracy
     train_predictions = loaded_gnb.predict(train_features_pca)
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     # nb_model = GaussianNB()
     # nb_model.fit(train_features_pca, train_labels_np)
     # torch.save(nb_model, "scikit_gaussian_naive_bayes.pth")
-    loaded_nb = torch.load("scikit_gaussian_naive_bayes.pth")
+    loaded_nb = torch.load("./models/scikit_gaussian_naive_bayes.pth")
 
     # Train accuracy
     nb_train_predictions = loaded_nb.predict(train_features_pca)
@@ -133,22 +133,20 @@ if __name__ == "__main__":
         [],
     )
     for depth in tree_depths:
+        dtc = tree.DecisionTreeClassifier(criterion="gini", max_depth=depth)
         # Train the decision tree with the current depth
-        dt = DecisionTree(max_depth=depth)
-        dt.fit(train_features_pca, train_labels_np)
-        torch.save(dt, f"decision_tree_model_{depth}.pth")
-
-        # Predictions on the test set
-        test_predictions = dt.predict(test_features_pca)
+        dtc.fit(train_features_pca, train_labels_np)
+        torch.save(dtc, f"./models/scikit_decision_tree_model_{depth}.pth")
 
         # Calculate Training Accuracy
-        train_predictions = dt.predict(train_features_pca)
+        train_predictions = dtc.predict(train_features_pca)
         train_accuracy = np.mean(train_predictions == train_labels_np)
         train_accuracies.append(train_accuracy)
         print(f"Depth {depth}: Training Accuracy = {train_accuracy:.4f}")
 
         # Calculate Test Accuracy
-        test_accuracy = np.mean(test_predictions == test_labels_np)
+        test_predictions = dtc.predict(test_features_pca)
+        test_accuracy = np.mean(test_labels_np == test_predictions)
         test_accuracies.append(test_accuracy)
         print(f"Depth {depth}: Test Accuracy = {test_accuracy:.4f}")
         precision = precision_score(
@@ -184,9 +182,9 @@ if __name__ == "__main__":
     plt.plot(tree_depths, recalls, label="Recall", marker="x", markersize=6)
     plt.plot(tree_depths, f1_scores, label="F1-Measure", marker="x", markersize=6)
 
-    plt.xlabel("Tree Depth")
+    plt.xlabel("Depth")
     plt.ylabel("Metrics")
-    plt.title("Tree Depth vs Metrics (Multiples of 5)")
+    plt.title("Tree Depth vs Metrics")
     plt.legend()
     plt.grid()
     plt.show()
