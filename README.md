@@ -20,6 +20,8 @@ Khanh Huy Nguyen 40125396
 
 `models/`: A folder containing all saved trained models.
 
+`.gitignore`: Ignores folders `cifar-10-batches-py/` and `__pycache__/` since we don't want to commit these.
+
 ## Getting Started
 
 To run the program, simply run the script `main.py` in Interactive Window. This will ensure that the graphs are generated.
