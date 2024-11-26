@@ -1,4 +1,6 @@
 import numpy as np
+import torch
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 
 class GaussianNaiveBayes:
@@ -54,3 +56,39 @@ class GaussianNaiveBayes:
                 class_posteriors.append(posterior)
             posteriors.append(class_posteriors)
         return np.array([self.classes[np.argmax(p)] for p in posteriors])
+
+
+def get_naive_bayes_metrics(
+    train_features_pca,
+    train_labels_np,
+    test_features_pca,
+    test_labels_np,
+    useScikit=False,
+):
+    if useScikit:
+        loaded_nb = torch.load("./models/scikit_gaussian_naive_bayes.pth")
+    else:
+        loaded_nb = torch.load("./models/gaussian_naive_bayes.pth")
+
+    # Train accuracy
+    nb_train_predictions = loaded_nb.predict(train_features_pca)
+    nb_train_accuracy = np.mean(nb_train_predictions == train_labels_np)
+
+    # Calculate Test Accuracy
+    nb_predictions = loaded_nb.predict(test_features_pca)
+    nb_test_accuracy = np.mean(nb_predictions == test_labels_np)
+    nb_precision = precision_score(
+        test_labels_np, nb_predictions, average="weighted", zero_division=0
+    )
+    nb_recall = recall_score(
+        test_labels_np, nb_predictions, average="weighted", zero_division=0
+    )
+    nb_f1 = f1_score(
+        test_labels_np, nb_predictions, average="weighted", zero_division=0
+    )
+
+    print(f"Scikit: {useScikit}. Training Accuracy = {nb_train_accuracy * 100:.2f}%")
+    print(f"Scikit: {useScikit}. Test Accuracy = {nb_test_accuracy * 100:.2f}%")
+    print(f"Scikit: {useScikit}. Precision = {nb_precision}")
+    print(f"Scikit: {useScikit}. Recall = {nb_recall}")
+    print(f"Scikit: {useScikit}. f1 = {nb_f1}")

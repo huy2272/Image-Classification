@@ -1,4 +1,8 @@
 import numpy as np
+import torch
+from sklearn import tree
+import matplotlib.pyplot as plt
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 
 class DecisionTree:
@@ -122,3 +126,172 @@ class DecisionTree:
         return np.array(
             [self._predict_single(feature, self.tree) for feature in test_features]
         )
+
+
+def plot_decision_tree_metrics(
+    train_features_pca,
+    train_labels_np,
+    test_features_pca,
+    test_labels_np,
+    useScikit=False,
+):
+    tree_depths = range(10, 55, 5)
+    loaded_dt_10 = torch.load("./models/decision_tree_model_10.pth")
+    loaded_dt_15 = torch.load("./models/decision_tree_model_15.pth")
+    loaded_dt_20 = torch.load("./models/decision_tree_model_20.pth")
+    loaded_dt_25 = torch.load("./models/decision_tree_model_25.pth")
+    loaded_dt_30 = torch.load("./models/decision_tree_model_30.pth")
+    loaded_dt_35 = torch.load("./models/decision_tree_model_35.pth")
+    loaded_dt_40 = torch.load("./models/decision_tree_model_40.pth")
+    loaded_dt_45 = torch.load("./models/decision_tree_model_45.pth")
+    loaded_dt_50 = torch.load("./models/decision_tree_model_50.pth")
+
+    loaded_dtc_10 = torch.load("./models/scikit_decision_tree_model_10.pth")
+    loaded_dtc_15 = torch.load("./models/scikit_decision_tree_model_15.pth")
+    loaded_dtc_20 = torch.load("./models/scikit_decision_tree_model_20.pth")
+    loaded_dtc_25 = torch.load("./models/scikit_decision_tree_model_25.pth")
+    loaded_dtc_30 = torch.load("./models/scikit_decision_tree_model_30.pth")
+    loaded_dtc_35 = torch.load("./models/scikit_decision_tree_model_35.pth")
+    loaded_dtc_40 = torch.load("./models/scikit_decision_tree_model_40.pth")
+    loaded_dtc_45 = torch.load("./models/scikit_decision_tree_model_45.pth")
+    loaded_dtc_50 = torch.load("./models/scikit_decision_tree_model_50.pth")
+
+    loaded_dts = [
+        loaded_dt_10,
+        loaded_dt_15,
+        loaded_dt_20,
+        loaded_dt_25,
+        loaded_dt_30,
+        loaded_dt_35,
+        loaded_dt_40,
+        loaded_dt_45,
+        loaded_dt_50,
+    ]
+
+    loaded_dtcs = [
+        loaded_dtc_10,
+        loaded_dtc_15,
+        loaded_dtc_20,
+        loaded_dtc_25,
+        loaded_dtc_30,
+        loaded_dtc_35,
+        loaded_dtc_40,
+        loaded_dtc_45,
+        loaded_dtc_50,
+    ]
+
+    train_accuracies, test_accuracies, precisions, recalls, f1_scores = (
+        [],
+        [],
+        [],
+        [],
+        [],
+    )
+    if useScikit:
+        for dtc in loaded_dtcs:
+            # Calculate Training Accuracy
+            train_predictions = dtc.predict(train_features_pca)
+            train_accuracy = np.mean(train_predictions == train_labels_np)
+            train_accuracies.append(train_accuracy)
+            # Calculate Test Accuracy
+            test_predictions = dtc.predict(test_features_pca)
+            test_accuracy = np.mean(test_labels_np == test_predictions)
+            test_accuracies.append(test_accuracy)
+            precision = precision_score(
+                test_labels_np, test_predictions, average="weighted", zero_division=0
+            )
+            recall = recall_score(
+                test_labels_np, test_predictions, average="weighted", zero_division=0
+            )
+            f1 = f1_score(
+                test_labels_np, test_predictions, average="weighted", zero_division=0
+            )
+
+            precisions.append(precision)
+            recalls.append(recall)
+            f1_scores.append(f1)
+
+        plt.figure(figsize=(12, 8))
+
+        # Accuracy Plot
+        plt.plot(
+            tree_depths,
+            train_accuracies,
+            label="Training Accuracy",
+            marker="o",
+            markersize=6,
+        )
+        plt.plot(
+            tree_depths,
+            test_accuracies,
+            label="Test Accuracy",
+            marker="o",
+            markersize=6,
+        )
+
+        # Precision, Recall, F1-Measure Plots
+        plt.plot(tree_depths, precisions, label="Precision", marker="x", markersize=6)
+        plt.plot(tree_depths, recalls, label="Recall", marker="x", markersize=6)
+        plt.plot(tree_depths, f1_scores, label="F1-Measure", marker="x", markersize=6)
+
+        plt.xlabel("Depth")
+        plt.ylabel("Metrics")
+        plt.title("Tree Depth vs Metrics (Scikit's Implementation)")
+        plt.legend()
+        plt.grid()
+        plt.show()
+    else:
+        for dt in loaded_dts:
+            # Calculate Training Accuracy
+            train_predictions = dt.predict(train_features_pca)
+            train_accuracy = np.mean(train_predictions == train_labels_np)
+
+            # Calculate Test Accuracy
+            test_predictions = dt.predict(test_features_pca)
+            test_accuracy = np.mean(test_labels_np == test_predictions)
+
+            precision = precision_score(
+                test_labels_np, test_predictions, average="weighted", zero_division=0
+            )
+            recall = recall_score(
+                test_labels_np, test_predictions, average="weighted", zero_division=0
+            )
+            f1 = f1_score(
+                test_labels_np, test_predictions, average="weighted", zero_division=0
+            )
+
+            train_accuracies.append(train_accuracy)
+            test_accuracies.append(test_accuracy)
+            precisions.append(precision)
+            recalls.append(recall)
+            f1_scores.append(f1)
+
+        plt.figure(figsize=(12, 8))
+
+        # Accuracy Plot
+        plt.plot(
+            tree_depths,
+            train_accuracies,
+            label="Training Accuracy",
+            marker="o",
+            markersize=6,
+        )
+        plt.plot(
+            tree_depths,
+            test_accuracies,
+            label="Test Accuracy",
+            marker="o",
+            markersize=6,
+        )
+
+        # Precision, Recall, F1-Measure Plots
+        plt.plot(tree_depths, precisions, label="Precision", marker="x", markersize=6)
+        plt.plot(tree_depths, recalls, label="Recall", marker="x", markersize=6)
+        plt.plot(tree_depths, f1_scores, label="F1-Measure", marker="x", markersize=6)
+
+        plt.xlabel("Depth")
+        plt.ylabel("Metrics")
+        plt.title("Tree Depth vs Metrics (Local Implementation)")
+        plt.legend()
+        plt.grid()
+        plt.show()

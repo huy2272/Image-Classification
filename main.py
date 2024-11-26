@@ -1,15 +1,15 @@
+from sklearn import tree
 import torch
 import torchvision
 import torch.nn as nn
 from torchvision import datasets, models, transforms
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import precision_score, recall_score, f1_score
-from naive_bayes import GaussianNaiveBayes
+from naive_bayes import GaussianNaiveBayes, get_naive_bayes_metrics
 from utils import extract_feature_vectors, select_n_img
 import numpy as np
-from sklearn import tree
-from decision_tree import DecisionTree
-import matplotlib.pyplot as plt
+from decision_tree import DecisionTree, plot_decision_tree_metrics
+
 
 if __name__ == "__main__":
     data_dir = "./"
@@ -70,121 +70,58 @@ if __name__ == "__main__":
     # Training the Gaussian Naive Bayes model implementation
     # gnb = GaussianNaiveBayes()
     # gnb.fit(train_features_pca, train_labels_np)
-    # torch.save(gnb, "gaussian_naive_bayes.pth")
-    loaded_gnb = torch.load("./models/gaussian_naive_bayes.pth")
-
-    # Train accuracy
-    train_predictions = loaded_gnb.predict(train_features_pca)
-    train_accuracy = np.mean(train_predictions == train_labels_np)
-
-    # Calculate Test Accuracy
-    predictions = loaded_gnb.predict(test_features_pca)
-    test_accuracy = np.mean(predictions == test_labels_np)
-    precision = precision_score(
-        test_labels_np, predictions, average="weighted", zero_division=0
+    # torch.save(gnb, "./models/gaussian_naive_bayes.pth")
+    get_naive_bayes_metrics(
+        train_features_pca,
+        train_labels_np,
+        test_features_pca,
+        test_labels_np,
+        useScikit=False,
     )
-    recall = recall_score(
-        test_labels_np, predictions, average="weighted", zero_division=0
-    )
-    f1 = f1_score(test_labels_np, predictions, average="weighted", zero_division=0)
-
-    print(f"Training Accuracy = {train_accuracy* 100:.2f}%")
-    print(f"Test Accuracy = {test_accuracy * 100:.2f}%")
-    print(f"Precision = {precision}")
-    print(f"Recall = {recall}%")
-    print(f"f1 = {f1}%")
-
     # Scikit's Gaussian Naive Bayes
+    # Code to train the model
     # nb_model = GaussianNB()
     # nb_model.fit(train_features_pca, train_labels_np)
-    # torch.save(nb_model, "scikit_gaussian_naive_bayes.pth")
-    loaded_nb = torch.load("./models/scikit_gaussian_naive_bayes.pth")
-
-    # Train accuracy
-    nb_train_predictions = loaded_nb.predict(train_features_pca)
-    nb_train_accuracy = np.mean(nb_train_predictions == train_labels_np)
-
-    # Calculate Test Accuracy
-    nb_predictions = loaded_nb.predict(test_features_pca)
-    nb_test_accuracy = np.mean(nb_predictions == test_labels_np)
-    nb_precision = precision_score(
-        test_labels_np, nb_predictions, average="weighted", zero_division=0
-    )
-    nb_recall = recall_score(
-        test_labels_np, nb_predictions, average="weighted", zero_division=0
-    )
-    nb_f1 = f1_score(
-        test_labels_np, nb_predictions, average="weighted", zero_division=0
+    # torch.save(nb_model, "./models/scikit_gaussian_naive_bayes.pth")
+    get_naive_bayes_metrics(
+        train_features_pca,
+        train_labels_np,
+        test_features_pca,
+        test_labels_np,
+        useScikit=True,
     )
 
-    print(f"Training Accuracy = {nb_train_accuracy * 100:.2f}%")
-    print(f"Test Accuracy = {nb_test_accuracy * 100:.2f}%")
-    print(f"Precision = {nb_precision}")
-    print(f"Recall = {nb_recall}")
-    print(f"f1 = {nb_f1}")
+    # 4: Decision Tree
+    # Training code
+    # tree_depths = range(10, 55, 5)
+    # for depth in tree_depths:
+    #     # Train the decision tree with the current depth
+    #     dt = DecisionTree(max_depth=depth)
+    #     dt.fit(train_features_pca, train_labels_np)
+    #     torch.save(dt, f"./models/decision_tree_model_{depth}.pth")
 
-    # 3: Decision Tree
-    tree_depths = range(10, 55, 5)
-    train_accuracies, test_accuracies, precisions, recalls, f1_scores = (
-        [],
-        [],
-        [],
-        [],
-        [],
-    )
-    for depth in tree_depths:
-        dtc = tree.DecisionTreeClassifier(criterion="gini", max_depth=depth)
-        # Train the decision tree with the current depth
-        dtc.fit(train_features_pca, train_labels_np)
-        torch.save(dtc, f"./models/scikit_decision_tree_model_{depth}.pth")
-
-        # Calculate Training Accuracy
-        train_predictions = dtc.predict(train_features_pca)
-        train_accuracy = np.mean(train_predictions == train_labels_np)
-        train_accuracies.append(train_accuracy)
-        print(f"Depth {depth}: Training Accuracy = {train_accuracy:.4f}")
-
-        # Calculate Test Accuracy
-        test_predictions = dtc.predict(test_features_pca)
-        test_accuracy = np.mean(test_labels_np == test_predictions)
-        test_accuracies.append(test_accuracy)
-        print(f"Depth {depth}: Test Accuracy = {test_accuracy:.4f}")
-        precision = precision_score(
-            test_labels_np, test_predictions, average="weighted", zero_division=0
-        )
-        recall = recall_score(
-            test_labels_np, test_predictions, average="weighted", zero_division=0
-        )
-        f1 = f1_score(
-            test_labels_np, test_predictions, average="weighted", zero_division=0
-        )
-
-        precisions.append(precision)
-        recalls.append(recall)
-        f1_scores.append(f1)
-
-    plt.figure(figsize=(12, 8))
-
-    # Accuracy Plot
-    plt.plot(
-        tree_depths,
-        train_accuracies,
-        label="Training Accuracy",
-        marker="o",
-        markersize=6,
-    )
-    plt.plot(
-        tree_depths, test_accuracies, label="Test Accuracy", marker="o", markersize=6
+    # Generate metrics for local decision tree implementation and plot the results on a graph
+    plot_decision_tree_metrics(
+        train_features_pca,
+        train_labels_np,
+        test_features_pca,
+        test_labels_np,
+        useScikit=False,
     )
 
-    # Precision, Recall, F1-Measure Plots
-    plt.plot(tree_depths, precisions, label="Precision", marker="x", markersize=6)
-    plt.plot(tree_depths, recalls, label="Recall", marker="x", markersize=6)
-    plt.plot(tree_depths, f1_scores, label="F1-Measure", marker="x", markersize=6)
+    # Training code
+    # tree_depths = range(10, 55, 5)
+    # for depth in tree_depths:
+    #     dtc = tree.DecisionTreeClassifier(criterion="gini", max_depth=depth)
+    #     # Train the decision tree with the current depth
+    #     dtc.fit(train_features_pca, train_labels_np)
+    #     torch.save(dtc, f"./models/scikit_decision_tree_model_{depth}.pth")
 
-    plt.xlabel("Depth")
-    plt.ylabel("Metrics")
-    plt.title("Tree Depth vs Metrics")
-    plt.legend()
-    plt.grid()
-    plt.show()
+    # Generate metrics for Scikit's decision tree implementation and plot the results on a graph
+    plot_decision_tree_metrics(
+        train_features_pca,
+        train_labels_np,
+        test_features_pca,
+        test_labels_np,
+        useScikit=True,
+    )
