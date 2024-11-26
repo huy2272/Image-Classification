@@ -7,6 +7,9 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from naive_bayes import GaussianNaiveBayes
 from utils import extract_feature_vectors, select_n_img
 import numpy as np
+from sklearn import tree
+from decision_tree import DecisionTree
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     data_dir = "./"
@@ -119,3 +122,71 @@ if __name__ == "__main__":
     print(f"Precision = {nb_precision}")
     print(f"Recall = {nb_recall}")
     print(f"f1 = {nb_f1}")
+
+    # 3: Decision Tree
+    tree_depths = range(10, 55, 5)
+    train_accuracies, test_accuracies, precisions, recalls, f1_scores = (
+        [],
+        [],
+        [],
+        [],
+        [],
+    )
+    for depth in tree_depths:
+        # Train the decision tree with the current depth
+        dt = DecisionTree(max_depth=depth)
+        dt.fit(train_features_pca, train_labels_np)
+        torch.save(dt, f"decision_tree_model_{depth}.pth")
+
+        # Predictions on the test set
+        test_predictions = dt.predict(test_features_pca)
+
+        # Calculate Training Accuracy
+        train_predictions = dt.predict(train_features_pca)
+        train_accuracy = np.mean(train_predictions == train_labels_np)
+        train_accuracies.append(train_accuracy)
+        print(f"Depth {depth}: Training Accuracy = {train_accuracy:.4f}")
+
+        # Calculate Test Accuracy
+        test_accuracy = np.mean(test_predictions == test_labels_np)
+        test_accuracies.append(test_accuracy)
+        print(f"Depth {depth}: Test Accuracy = {test_accuracy:.4f}")
+        precision = precision_score(
+            test_labels_np, test_predictions, average="weighted", zero_division=0
+        )
+        recall = recall_score(
+            test_labels_np, test_predictions, average="weighted", zero_division=0
+        )
+        f1 = f1_score(
+            test_labels_np, test_predictions, average="weighted", zero_division=0
+        )
+
+        precisions.append(precision)
+        recalls.append(recall)
+        f1_scores.append(f1)
+
+    plt.figure(figsize=(12, 8))
+
+    # Accuracy Plot
+    plt.plot(
+        tree_depths,
+        train_accuracies,
+        label="Training Accuracy",
+        marker="o",
+        markersize=6,
+    )
+    plt.plot(
+        tree_depths, test_accuracies, label="Test Accuracy", marker="o", markersize=6
+    )
+
+    # Precision, Recall, F1-Measure Plots
+    plt.plot(tree_depths, precisions, label="Precision", marker="x", markersize=6)
+    plt.plot(tree_depths, recalls, label="Recall", marker="x", markersize=6)
+    plt.plot(tree_depths, f1_scores, label="F1-Measure", marker="x", markersize=6)
+
+    plt.xlabel("Tree Depth")
+    plt.ylabel("Metrics")
+    plt.title("Tree Depth vs Metrics (Multiples of 5)")
+    plt.legend()
+    plt.grid()
+    plt.show()
