@@ -53,8 +53,8 @@ Running the `main.py` script will automatically preprocess the images. Below is 
 
 1. Train
 
-   To train our locally implemented model. Uncomment line 70-72. This will train the model and save it in `./models/gaussian_naive_bayes.pth`
-   To train Scikit's model. Uncomment line 82-84. This will train the model and save it in `./models/scikit_gaussian_naive_bayes.pth`
+   To train our locally implemented model. Uncomment line `70-72`. This will train the model and save it in `./models/gaussian_naive_bayes.pth`
+   To train Scikit's model. Uncomment line `82-84`. This will train the model and save it in `./models/scikit_gaussian_naive_bayes.pth`
 3. Evaluate
 
    To evaluate the models and get our metrics, we are using the helper function `get_naive_bayes_metrics()`. This function simply calculates the metrics and print them to the console. We can choose which model we want to use via the param `get_naive_bayes_metrics(..., useScikit = True/False)`, if `True` we will use Scikit's model, `False` we will use our locally implemented model.
@@ -63,4 +63,25 @@ Running the `main.py` script will automatically preprocess the images. Below is 
 
 5. Apply
    
-   To apply the model, we simply load a trained model and pass int our test feature vectors `test_features_pca`. We can then calculate our metrics using the predictions the model returns `nb_predictions`
+   To apply the model, we simply load a trained model and pass in our test feature vectors `test_features_pca`. We can then calculate our metrics using the predictions the model returns `nb_predictions`. To get the model prediction we are using `.predict()`
+
+#### Decision Tree
+
+![image](https://github.com/user-attachments/assets/19dfa6f3-b952-4664-a6d4-373ff22cce14)
+
+
+1. Train
+
+   To train our locally implemented model. Uncomment line `95-100`. Since we are training this model at different `max_depth` we will save it in `./models/decision_tree_model_{depth}.pth`
+   To train Scikit's model. Uncomment line `112-117`. Since we are training this model at different `max_depth` we will save it in `./models/scikit_decision_tree_model_{depth}.pth`
+   
+3. Evaluate
+
+   To evaluate the models and get our metrics, we are using the helper function `plot_decision_tree_metrics()`. This function calculates the metrics and plot them (metrics vs tree depth). We can choose which model we want to use via the param `plot_decision_tree_metrics(..., useScikit = True/False)`, if `True` we will use Scikit's model, `False` we will use our locally implemented model.
+
+   ![image](https://github.com/user-attachments/assets/c519e3f9-1822-46ce-9b79-8e8a934f1345)
+
+
+5. Apply
+   
+   To apply the model, we simply load our trained models into a list. We can then iterate over this list to calculate our metrics for each model. Each model metrics are then store inside the following lists: `train_accuracies, test_accuracies, precisions, recalls, f1_scores`. For example, `train_accuracies[0]` will store the training accuracy for decision tree model with `max_depth = 10`. `train_accuracies[len(loaded_dtcs)]` will store the training accuracy for decision tree model with `max_depth = 50`. To get the model prediction we are using `.predict()`
