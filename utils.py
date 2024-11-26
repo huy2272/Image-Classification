@@ -35,15 +35,13 @@ def extract_feature_vectors(modified_model, dataloaders, device):
                     # features.shape = [500, 512, 1, 1]
                     features = modified_model(images.to(device))
                 # Reshape to (batch_size, num_features) = (500, 512)
-                print(features.shape)
                 features = features.to("cpu").reshape(features.size(0), -1)
-
                 train_features_list.append(features)
                 train_labels_list.append(labels)
 
             train_features = torch.cat(train_features_list, dim=0)
             train_labels = torch.cat(train_labels_list, dim=0)
-        if phase == "test":
+        elif phase == "test":
             for images, labels in dataloaders["train"]:
                 with torch.no_grad():
                     # features.shape = [500, 512, 1, 1]
@@ -53,11 +51,9 @@ def extract_feature_vectors(modified_model, dataloaders, device):
                     test_features_list.append(features)
                     test_labels_list.append(labels)
 
-                test_features = torch.cat(test_features_list, dim=0)
-                test_labels = torch.cat(test_labels_list, dim=0)
+            test_features = torch.cat(test_features_list, dim=0)
+            test_labels = torch.cat(test_labels_list, dim=0)
 
-    train_features_np = train_features.numpy()
-    test_features_np = test_features.numpy()
     train_features_np = train_features.numpy()
     test_features_np = test_features.numpy()
 
