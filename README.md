@@ -104,4 +104,22 @@ Running the `main.py` script will automatically preprocess the images. Below is 
 
 3. Train
 
-   asdasddassdadsa
+   line `69, 223, 387, 563, 713` are where the model definition starts, first one being main and rest the variants. The models will be trained using the following training loop.
+
+   ![image](https://github.com/user-attachments/assets/708646dc-fde7-4ead-9589-edb4a1d0aa30)
+
+4. Test
+
+  The models are tested the using the following loop. The testing loop is same for all the models.
+
+  ![image](https://github.com/user-attachments/assets/e4eb9c42-5ac7-4a8f-82c0-dd9f7dd910c5)
+
+5. Evaluation
+
+   For evaluating the results the following code snippet is used. Precision, recall and f1 measure are calculated using the sickit-learn functions. For generating the confusion matrix we use the seaborn, numpy, pandas and matplotlib libraries.
+
+    ![image](https://github.com/user-attachments/assets/de548259-03f0-46b0-91a1-6583c08e9335)
+
+
+
+   
