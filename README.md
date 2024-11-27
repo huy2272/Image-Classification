@@ -21,6 +21,10 @@ Khanh Huy Nguyen 40125396
 
 `graphs/Scikit_Decision_Tree.png`: A graph plotting the metrics (training accuracy, testing accuracy, precision, recall and f1-score) against the max_depths of the Scikit's decision tree.
 
+`graphs/DT_10.png`: Confusion matrices for locally implemented Decision Tree algorithm with maximum depth of `10`. There are multiple but the file name follows this naming convention. `DT_{depth}`, where depth is the decision tree's maximum depth.
+
+`graphs/Scikit_DT_10.png`: Confusion matrices for Scikit's Decision Tree algorithm with maximum depth of `10`. There are multiple but the file name follows this naming convention. `Scikit_DT_{depth}`, where depth is the decision tree's maximum depth.
+
 `.gitignore`: Ignores folders `cifar-10-batches-py/` and `__pycache__/` since we don't want to commit these.
 
 ## Getting Started
