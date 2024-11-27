@@ -13,6 +13,10 @@ Khanh Huy Nguyen 40125396
 
 `utils.py`: Contains utility functions: select_n_img() and extract_feature_vectors(). `select_n_img()` will select 500 training images per class and 100 testing images per class. `extract_feature_vectors()` takes in the data along with a model and will generate the PCA-reduced feature vectors.
 
+`mlp.py`: This is the file where we have defined our multilayer perceptron model and its variants. Training, testing and evaluation are done in this same file and metrics printed to the console.
+
+`cnn.py`: This is the file where we have created our Convolutional Neural Network. Training, testing and evaluation code included.
+
 `naive_bayes.py`: Contains the Naive Bayes algorithm implementation.
 
 `decision_tree.py`: Contains the decision tree algorithm implementation and a help function to plot the calculated metrics (training accuracy, testing accuracy, precision, recall and f1-score).
@@ -26,6 +30,8 @@ Khanh Huy Nguyen 40125396
 `graphs/Scikit_DT_10.png`: Confusion matrices for Scikit's Decision Tree algorithm with maximum depth of `10`. There are multiple but the file name follows this naming convention. `Scikit_DT_{depth}`, where depth is the decision tree's maximum depth.
 
 `.gitignore`: Ignores folders `cifar-10-batches-py/` and `__pycache__/` since we don't want to commit these.
+
+`MLP`: This is a folder that contains our pre-trained MLP models. The confusion matrix for the main model and its variants are also stored inside. file.pth are model saves and file.png are the confusion matrices (file is respective filename).
 
 ## Getting Started
 
