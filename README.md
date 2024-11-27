@@ -103,4 +103,5 @@ Running the `main.py` script will automatically preprocess the images. Below is 
 2. Click the run button and wait for the program to finish executing.
 
 3. Train
-   4. 
+
+   asdasddassdadsa
