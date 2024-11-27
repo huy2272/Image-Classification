@@ -2,7 +2,13 @@ import numpy as np
 import torch
 from sklearn import tree
 import matplotlib.pyplot as plt
-from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import (
+    ConfusionMatrixDisplay,
+    confusion_matrix,
+    precision_score,
+    recall_score,
+    f1_score,
+)
 
 
 class DecisionTree:
@@ -187,6 +193,18 @@ def plot_decision_tree_metrics(
         [],
         [],
     )
+    classes = [
+        "airplane",
+        "automobile",
+        "bird",
+        "cat",
+        "deer",
+        "dog",
+        "frog",
+        "horse",
+        "ship",
+        "truck",
+    ]
     if useScikit:
         for dtc in loaded_dtcs:
             # Calculate Training Accuracy
@@ -210,10 +228,17 @@ def plot_decision_tree_metrics(
             precisions.append(precision)
             recalls.append(recall)
             f1_scores.append(f1)
+            dtc_conf_matrix = confusion_matrix(test_labels_np, test_predictions)
+
+            disp = ConfusionMatrixDisplay(
+                confusion_matrix=dtc_conf_matrix, display_labels=classes
+            )
+            disp.plot(cmap=plt.cm.Blues, colorbar=False)
+            plt.title(f"Confusion Matrix - Decision Tree - Scikit: {useScikit}")
+            plt.show()
 
         plt.figure(figsize=(12, 8))
-
-        # Accuracy Plot
+        # Accuracy Plot, Precision, Recall, F1-Measure Plots
         plt.plot(
             tree_depths,
             train_accuracies,
@@ -228,8 +253,6 @@ def plot_decision_tree_metrics(
             marker="o",
             markersize=6,
         )
-
-        # Precision, Recall, F1-Measure Plots
         plt.plot(tree_depths, precisions, label="Precision", marker="x", markersize=6)
         plt.plot(tree_depths, recalls, label="Recall", marker="x", markersize=6)
         plt.plot(tree_depths, f1_scores, label="F1-Measure", marker="x", markersize=6)
@@ -265,10 +288,17 @@ def plot_decision_tree_metrics(
             precisions.append(precision)
             recalls.append(recall)
             f1_scores.append(f1)
+            dtc_conf_matrix = confusion_matrix(test_labels_np, test_predictions)
+
+            disp = ConfusionMatrixDisplay(
+                confusion_matrix=dtc_conf_matrix, display_labels=classes
+            )
+            disp.plot(cmap=plt.cm.Blues, colorbar=False)
+            plt.title(f"Confusion Matrix - Decision Tree - Scikit: {useScikit}")
+            plt.show()
 
         plt.figure(figsize=(12, 8))
-
-        # Accuracy Plot
+        # Accuracy Plot, Precision, Recall, F1-Measure Plots
         plt.plot(
             tree_depths,
             train_accuracies,
@@ -283,8 +313,6 @@ def plot_decision_tree_metrics(
             marker="o",
             markersize=6,
         )
-
-        # Precision, Recall, F1-Measure Plots
         plt.plot(tree_depths, precisions, label="Precision", marker="x", markersize=6)
         plt.plot(tree_depths, recalls, label="Recall", marker="x", markersize=6)
         plt.plot(tree_depths, f1_scores, label="F1-Measure", marker="x", markersize=6)
