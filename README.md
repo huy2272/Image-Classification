@@ -5,6 +5,9 @@ Mohammad Usman 40170784
 Khanh Huy Nguyen 40125396
 
 ## Description
+`models/`: A folder containing all saved trained models.
+
+`graphs/`: A folder containing all graphs, confusion matrices.
 
 `main.py`: Where we will be running our program. This file contains code on transforming and loading our data from CIFAR-10.
 
@@ -14,11 +17,9 @@ Khanh Huy Nguyen 40125396
 
 `decision_tree.py`: Contains the decision tree algorithm implementation and a help function to plot the calculated metrics (training accuracy, testing accuracy, precision, recall and f1-score).
 
-`Decision_Tree.png`: A graph plotting the metrics (training accuracy, testing accuracy, precision, recall and f1-score) against the max_depths of the local implemented decision tree.
+`graphs/Decision_Tree.png`: A graph plotting the metrics (training accuracy, testing accuracy, precision, recall and f1-score) against the max_depths of the local implemented decision tree.
 
-`Scikit_Decision_Tree.png`: A graph plotting the metrics (training accuracy, testing accuracy, precision, recall and f1-score) against the max_depths of the Scikit's decision tree.
-
-`models/`: A folder containing all saved trained models.
+`graphs/Scikit_Decision_Tree.png`: A graph plotting the metrics (training accuracy, testing accuracy, precision, recall and f1-score) against the max_depths of the Scikit's decision tree.
 
 `.gitignore`: Ignores folders `cifar-10-batches-py/` and `__pycache__/` since we don't want to commit these.
 
