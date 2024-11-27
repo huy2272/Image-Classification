@@ -120,6 +120,13 @@ Running the `main.py` script will automatically preprocess the images. Below is 
 
     ![image](https://github.com/user-attachments/assets/de548259-03f0-46b0-91a1-6583c08e9335)
 
+#### Concolutional Neural Network
+1. Open the `cnn.py` file
+
+2. Click run and wait for program to execute
+
+3. The Evaluation metrics for the model and printed 
+
 
 
    
