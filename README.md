@@ -98,4 +98,9 @@ Running the `main.py` script will automatically preprocess the images. Below is 
    To apply the model, we simply load our trained models into a list. We can then iterate over this list to calculate our metrics for each model. Each model metrics are then store inside the following lists: `train_accuracies, test_accuracies, precisions, recalls, f1_scores`. For example, `train_accuracies[0]` will store the training accuracy for decision tree model with `max_depth = 10`. `train_accuracies[len(loaded_dtcs)]` will store the training accuracy for decision tree model with `max_depth = 50`. To get the model prediction we are using `.predict()`
 
 #### Multilayer Perceptron
+1. Open the `mlp.py` file.
 
+2. Click the run button and wait for the program to finish executing.
+
+3. Train
+   dsaasddasasdasd
