@@ -31,7 +31,7 @@ Khanh Huy Nguyen 40125396
 
 `.gitignore`: Ignores folders `cifar-10-batches-py/` and `__pycache__/` since we don't want to commit these.
 
-`MLP`: This is a folder that contains our pre-trained MLP models. The confusion matrix for the main model and its variants are also stored inside. file.pth are model saves and file.png are the confusion matrices (file is respective filename).
+`MLP`: This is a folder that contains our pre-trained MLP models. The confusion matrix for the main model and its variants are also stored inside. `.pth` are model saves and `.png` are the confusion matrices (file is respective filename).
 
 ## Getting Started
 
@@ -96,3 +96,6 @@ Running the `main.py` script will automatically preprocess the images. Below is 
 5. Apply
    
    To apply the model, we simply load our trained models into a list. We can then iterate over this list to calculate our metrics for each model. Each model metrics are then store inside the following lists: `train_accuracies, test_accuracies, precisions, recalls, f1_scores`. For example, `train_accuracies[0]` will store the training accuracy for decision tree model with `max_depth = 10`. `train_accuracies[len(loaded_dtcs)]` will store the training accuracy for decision tree model with `max_depth = 50`. To get the model prediction we are using `.predict()`
+
+#### Multilayer Perceptron
+
