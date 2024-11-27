@@ -1,6 +1,13 @@
 import numpy as np
 import torch
-from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import (
+    ConfusionMatrixDisplay,
+    confusion_matrix,
+    precision_score,
+    recall_score,
+    f1_score,
+)
+import matplotlib.pyplot as plt
 
 
 class GaussianNaiveBayes:
@@ -92,3 +99,23 @@ def get_naive_bayes_metrics(
     print(f"Scikit: {useScikit}. Precision = {nb_precision}")
     print(f"Scikit: {useScikit}. Recall = {nb_recall}")
     print(f"Scikit: {useScikit}. f1 = {nb_f1}")
+    gnb_conf_matrix = confusion_matrix(test_labels_np, nb_predictions)
+    classes = [
+        "airplane",
+        "automobile",
+        "bird",
+        "cat",
+        "deer",
+        "dog",
+        "frog",
+        "horse",
+        "ship",
+        "truck",
+    ]
+
+    disp = ConfusionMatrixDisplay(
+        confusion_matrix=gnb_conf_matrix, display_labels=classes
+    )
+    disp.plot(cmap=plt.cm.Blues, colorbar=False)
+    plt.title(f"Confusion Matrix - GaussianNaiveBayes - Scikit: {useScikit}")
+    plt.show()

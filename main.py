@@ -4,7 +4,6 @@ import torchvision
 import torch.nn as nn
 from torchvision import datasets, models, transforms
 from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import precision_score, recall_score, f1_score
 from naive_bayes import GaussianNaiveBayes, get_naive_bayes_metrics
 from utils import extract_feature_vectors, select_n_img
 import numpy as np
